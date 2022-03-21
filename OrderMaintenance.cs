@@ -41,9 +41,24 @@ namespace Order_Entry_System
                         DeleteOrderDetail();
                         break;
                     case 4:
-                        FetchOrderDetail();
-                        FetchOrderLineDetail();
-                        break;
+                    WriteLine("1.Order Detail And OrderLine Detail by id");
+                    WriteLine("2.All Order Details And OrderLine Details");
+                    int od = ToInt32(ReadLine());
+                    switch (od)
+                    {
+                        case 1:
+                            Order om = new Order();
+                            WriteLine("Enter Order ID");
+                            om.Order_ID = ToInt32(ReadLine());
+                            FetchOrderDetailbyID(om.Order_ID);
+                            FetchOrderLineDetailbyID(om.Order_ID);
+                            break;
+                        case 2:
+                            FetchOrderDetail();
+                            FetchOrderLineDetail();
+                            break;
+                    }
+                    break;
                     case 5:
                         
                             break;
@@ -139,19 +154,21 @@ namespace Order_Entry_System
                 }
                 //sum += lin.Amount;
                 
-                   updateProductQuan(lin.Product_ID, lin.Quantity_ordered);
+                   updateProductQuan(lin.Order_ID,lin.Product_ID, lin.Quantity_ordered);
                 
             }
             updateAmount(ordD.Order_ID);
         }
-        static void updateProductQuan(string proID,int quan)
+        static void updateProductQuan(int ordID,string proID,int quan)
         {
-            Product pro = new Product();
-            pro.Product_ID = proID;
+            
+            
             OrderLine lin = new OrderLine();
+            lin.Product_ID = proID;
+            lin.Order_ID = ordID;
             lin.Quantity_ordered = quan;
-            ProductBL proBL = new ProductBL();
-                    int n = proBL.UpdateProductQuan_in_handBL(pro, lin);
+            OrderLineBL proBL = new OrderLineBL();
+                    int n = proBL.UpdateProductQuan_in_handBL(lin);
                     if (n != 0)
                     {
                         WriteLine("Successfully updated Quan in hand");
@@ -217,15 +234,9 @@ namespace Order_Entry_System
             ordD.Customer_ID = ReadLine();
             WriteLine("Enter Order ID");
             ordD.Order_ID = ToInt32(ReadLine());
+          
             OrderBL ord = new OrderBL();
-            DataSet ds = ord.FetchAllOrderBL();
-            foreach (DataRow dr in ds.Tables[0].Rows)
-            {
-                ordD.Shippment_Date = (DateTime)dr[3];
-                ordD.Paid_status = (string)dr[6];
-                DateTime CurDate = DateTime.Today;
-                if (ordD.Shippment_Date <= CurDate && ordD.Customer_ID == (string)dr[7] && ordD.Order_ID == (int)dr[0])
-                {
+            
                     int n = ord.DeleteOrderBL(ordD);
                     if (n != 0)
                     {
@@ -235,8 +246,8 @@ namespace Order_Entry_System
                     {
                         WriteLine("Failed to Delete");
                     }
-                }
-            }
+      
+            
            
         }
         public  void FetchOrderDetailAndUpdateStatus()
@@ -269,6 +280,36 @@ namespace Order_Entry_System
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
                 WriteLine("{0,-5} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}{7,-15}\n", dr[0], ((DateTime)dr[1]).ToString("dd-MM-yyyy"), dr[2], ((DateTime)dr[3]).ToString("dd-MM-yyyy"), ((DateTime)dr[4]).ToString("dd-MM-yyyy"), dr[5], dr[6],dr[7]);
+            }
+
+        }
+
+        static void FetchOrderDetailbyID(int ord1)
+        {
+            Order ot = new Order();
+            ot.Order_ID = ord1;
+            OrderBL ord = new OrderBL();
+            DataSet ds = ord.FetchOrderbyidBL(ot);
+            WriteLine("Order Details");
+            WriteLine("{0,-5} {1,-15} {2,-15} {3,-15} {4,-15} {5,-10} {6,-15}{7,-15}\n", "OrdID", "Ord_date", "Amount", "Ship_date", "Del_date", "Ord_status", "Paid_status", "CusID");
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                WriteLine("{0,-5} {1,-15} {2,-15} {3,-15} {4,-15} {5,-15} {6,-15}{7,-15}\n", dr[0], ((DateTime)dr[1]).ToString("dd-MM-yyyy"), dr[2], ((DateTime)dr[3]).ToString("dd-MM-yyyy"), ((DateTime)dr[4]).ToString("dd-MM-yyyy"), dr[5], dr[6], dr[7]);
+            }
+
+        }
+        static void FetchOrderLineDetailbyID(int ord2)
+        {
+            OrderLine ot = new OrderLine();
+            ot.Order_ID = ord2;
+            
+            OrderLineBL lin = new OrderLineBL();
+            DataSet ds = lin.FetchOrderLinebyidBL(ot);
+            WriteLine("OrderLine Details");
+            WriteLine("{0,-5} {1,-15} {2,-15} {3,-15} {4,-15}\n", "ProID", "OrdID", "Selling_Price", "Quan_ordered", "Line_amount");
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                WriteLine("{0,-5} {1,-15} {2,-15} {3,-15} {4,-15}\n", dr[0], dr[1], dr[2], dr[3], dr[4]);
             }
 
         }
