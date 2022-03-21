@@ -62,7 +62,7 @@ namespace Order_Entry_System
             proD.Product_ID = ReadLine();
             WriteLine("Enter Product Name");
             proD.Product_Name = ReadLine();
-            WriteLine("Enter Product descrption");
+            WriteLine("Enter Product description");
             proD.Product_Description = ReadLine();
             WriteLine("Enter Listing Price");
             proD.Listing_Price= ToDecimal(ReadLine());

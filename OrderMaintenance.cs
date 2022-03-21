@@ -129,7 +129,7 @@ namespace Order_Entry_System
             //decimal sum = 0;
             for (int i = 0; i < n; i++)
             {
-                WriteLine("For " + (i + 1) + "Item ");
+                WriteLine("For " + (i + 1) + " Item ");
                 WriteLine("Enter Product ID");
                 lin.Product_ID = ReadLine();
                 lin.Order_ID = ordD.Order_ID;
@@ -200,39 +200,27 @@ namespace Order_Entry_System
             Order ordD = new Order();
             WriteLine("Enter Customer ID");
             ordD.Customer_ID = ReadLine();
-            WriteLine("Enter Order ID");
+            WriteLine("Enter Order ID to be deleted");
             ordD.Order_ID = ToInt32(ReadLine());
             OrderBL ord = new OrderBL();
-            DataSet ds = ord.FetchAllOrderBL();
-            foreach (DataRow dr in ds.Tables[0].Rows)
-            {
-                ordD.Shippment_Date = (DateTime)dr[3];
-                ordD.Paid_status = (string)dr[6];
-                DateTime CurDate = DateTime.Today;
-                if (ordD.Shippment_Date <= CurDate && ordD.Customer_ID==(string)dr[7] && ordD.Order_ID==(int)dr[0])
-                {
-
                     int n = ord.DeleteOrderBL(ordD);
                     if (n != 0)
                     {
-                        WriteLine("This order has been deleted ,to update it again type the order");
+                        WriteLine("To update it, the  order has been deleted.ReType the order with values you wanted to update");
+                        AddOrderDetail();
                     }
                     else
                     {
                         WriteLine("Failed to Delete");
                     }
-                    AddOrderDetail();
-
-                }
-            }
-
+               
         }
         static void DeleteOrderDetail()
         {
             Order ordD = new Order();
             WriteLine("Enter Customer ID");
             ordD.Customer_ID = ReadLine();
-            WriteLine("Enter Order ID");
+            WriteLine("Enter Order ID to be deleted");
             ordD.Order_ID = ToInt32(ReadLine());
           
             OrderBL ord = new OrderBL();
